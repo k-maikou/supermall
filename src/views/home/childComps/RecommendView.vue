@@ -29,7 +29,7 @@ export default {
   justify-content: space-between;
   text-align: center;
   font-size: .75rem;
-  padding: .625rem 0 1.25rem;
+  padding: .625rem 0 1.25rem 0;
   border-bottom: .5rem solid #eee;
 }
 .recommends-item{
