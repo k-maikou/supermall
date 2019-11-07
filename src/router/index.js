@@ -2,15 +2,17 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 
 //1. 安装插件
-Vue.use(VueRouter);
 const Home = () => import('views/home/Home.vue')
 const Cart = () => import('views/cart/Cart.vue')
 const Category = () => import('views/category/Category.vue')
 const Profile = () => import('views/profile/Profile.vue')
+const Detail = () => import('views/detail/Detail.vue')
+
+Vue.use(VueRouter);
 
 const routes = [
   {
-    path: '/',
+    path: '',
     redirect: '/home'
   },
   {
@@ -28,6 +30,10 @@ const routes = [
   {
     path: '/profile',
     component: Profile
+  },
+  {
+    path: '/detail:iid',
+    component: Detail
   }
 ]
 
