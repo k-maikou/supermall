@@ -9,6 +9,7 @@
     <cart-list/>
     
     <!-- 底部的汇总 -->
+    <cart-bottom-bar/>
   </div>
 </template>
 
@@ -16,6 +17,8 @@
 import NavBar from 'components/common/navbar/NavBar'
 
 import CartList from './childComps/CartList'
+import CartBottomBar from './childComps/CartBottomBar'
+
 // vuex内部的属性，可以把vuex对应的getters内的方法解析成计算属性
 import {mapGetters} from 'vuex'
 
@@ -24,6 +27,7 @@ export default {
   components: {
     NavBar,
     CartList,
+    CartBottomBar
   },
   computed: {
     // 解构vuex里getters的方法，成为计算属性，不用再次定义，直接使用
