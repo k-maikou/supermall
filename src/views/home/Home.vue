@@ -6,14 +6,14 @@
                   ref="tabControl1" 
                   class="tab-control" 
                   v-show="isTabFixed"></tab-control>
-                  
+                
     <scroll class="content" 
             ref="scroll" 
             :probe-type="3" 
             @scroll="contentScroll" 
             :pull-up-load="true"
             @pullingUp="loadMore">
-      
+
       <home-swiper :banners="banners" @swiperImageLoad="swiperImageLoad"></home-swiper>
       <recommend-view :recommends="recommends"></recommend-view>
       <feature-view></feature-view>
@@ -21,7 +21,7 @@
                   :titles="['流行', '新款', '精选']" 
                   ref="tabControl2"></tab-control>
       <goods-list :goods="showGoods"></goods-list>
-      
+    
     </scroll>
 
     <!-- 监听组件点击 -->
@@ -35,14 +35,13 @@ import NavBar from 'components/common/navbar/NavBar.vue'
 import TabControl from 'components/content/tabControl/TabControl'
 import GoodsList from 'components/content/goods/GoodsList'
 import Scroll from 'components/common/bscroll/Scroll'
-import BackTop from 'components/content/backTop/BackTop'
 
 import HomeSwiper from './childComps/HomeSwiper'
 import RecommendView from './childComps/RecommendView'
 import FeatureView from './childComps/FeatureView'
 
 import {getHomeMultiData, getHomeGoods} from 'network/home'
-import {debounce} from 'common/utils'
+import {itemListenerMixin, backTopMixin} from 'common/mixin'
 
 import BScroll from 'better-scroll'
 
@@ -53,11 +52,11 @@ export default {
     TabControl,
     GoodsList,
     Scroll,
-    BackTop,
     HomeSwiper,
     RecommendView,
     FeatureView,
   },
+  mixins: [itemListenerMixin, backTopMixin],
   data() {
     return {
       banners: [],
@@ -71,12 +70,12 @@ export default {
       isShowBackTop: false,
       tabOffsetTop : 0,
       isTabFixed: false,
-      saveY: 0
+      saveY: 0,
     }
   },
   computed: {
     showGoods() {
-      return this.goods[this.currentType].list
+      return this.goods[this.currentType].list;
     }
   },
   created() {
@@ -90,20 +89,19 @@ export default {
 
   },
   activated() {
-    this.$refs.scroll.scrollTo(0, this.saveY, 0)
-    this.$refs.scroll.refresh()
+    // this.$refs.scroll._scroll.y = this.saveY;
+    this.$refs.scroll.scrollTo(0, this.saveY, 0);
+    this.$refs.scroll.refresh();
   },
   deactivated() {
-    this.saveY = this.$refs.scroll.getScrollY()
+    // 1. 保存Y值
+    this.saveY = this.$refs.scroll.getScrollY();
+
+    // 2. 取消全局事件监听
+    this.$bus.$off('itemImageLoad', this.ItemImgListener);
   },
   mounted() {
-    //1. 图片加载完成的事件监听
-    const refresh = debounce(this.$refs.scroll.refresh, 50)
-    // 3. 监听item中图片加载完成
-    this.$bus.$on('itemImageLoad', () => {
-      refresh()
-    })
-    
+    this.tabClick(0);
   },
   methods: {
     /**
@@ -123,9 +121,6 @@ export default {
       }
       this.$refs.tabControl1.currentIndex = index;
       this.$refs.tabControl2.currentIndex = index;
-    },
-    backClick() {
-      this.$refs.scroll.scrollTo(0, 0, 500);
     },
     contentScroll(position) {
       //1.判断backtop是否显示
